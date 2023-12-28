@@ -6,16 +6,12 @@
 <!-- This is where all the metadata for the page is -->
 <head>
 <title>Circadian Dynamics</title>
-<!-- Setting up PyScript -->
-<!-- <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-<script defer src="https://pyscript.net/latest/pyscript.js"></script> -->
 
 <!-- Style Sheet -->
 <style>
     h1 {
       text-align: center;
-    }
-    
+    } 
     h2 {
       text-align: left;
     }
@@ -34,36 +30,96 @@ This is where the body of the page is.
  -->
 <body>
 <h1>Circadian Dynamics</h1>
-<!-- Tool Disclaimer -->
-<h3>Disclaimer</h3>
-<p>This tool is in early development. <br></p>
-
 <!-- Tool Description -->
 <h2>Description</h2>
 <p>
-  <b>1. Goal</b><br>
-  The goal of this tool is to aid you in exploring circadian rhythms in your data. <br><br>
-  <b>2. How it works</b><br>
-  First, you will need to upload your data. <br>
-  Currenly, we only support ".csv" or ".txt" files with the following format: <br>
+  The goal of this project is to create an open source tool which enable you to explore
+   circadian rhythms in your data, regardless of your experience in coding. Under the 
+   hood this tool runs in Python and uses the scipy and statsmodels libraries heavily.
+   Please note that this tool is in early development. <br>
+   The figures we are using to show
+   the results of the analysis were made with a dataset that is only 1 week long. If
+   your data is longer than that, don't worry. The program will run but the stock figures
+   may look wonky. If that happens, just download the raw data of the results, make your own,
+   and share them with us! <br> 
+   We really want this to be a community driven project so if you happen
+   to get bit by the coding bug, please go to the project's 
+   <a href="https://github.com/edpclau/Client-Side-Circadian-Dynamics"> github page</a> 
+   and contribute!</p>
+  
+<h2>How it works</h2>
+<p>
+  <b>1. Client Side tool</b><br>
+  You need to be aware that Circadian Dynamics is a client side tool. This means
+  that all the analysis is done on your computer's web browser. We do not store your data or results.
+  This helps us ensure the longevity of this project since it doesn't require us to pay for expensive 
+  servers which can handle big data projects. On the other hand, the performance is going to be capped
+  by your hardware. Make sure that if you load a really big dataset, that your computer
+  can handle it. <br><br>
+
+  <b>2. Uploading your Data</b><br>
+  Currenly, we only support ".csv" or ".txt" files that are comma separated. If your file is 
+  tab delimited, you'll need to convert it first. Also, the structure of the data needs to
+  follow this format: <br>
   <ul>
-    <li>First column: Datime</li>
-    <li>Second column onwards: Variables for circadian analysis</li>
+    <li><b>First column:</b> Datime in the standard ISO format (Mear-Month-Day Hour-Minute-Seconds). 
+      It may work with other date formats but we haven't tested it yet. I wouldn't risk it.
+    </li>
+    <li><b>Second column onwards:</b> Independent variables for circadian analysis. Please note that
+    although you can upload as many columns as you want, the tool will only analyze one at a time.
+    </li>
   </ul>
-  <br>
-  Second, you will need to parse through a series of actograms of your data to select
-  the individuals you actually want to analyze. <br> <br>
 
-  Currenly, the tool uses wavelet transforms to discover the periodicity of your data. <br>
-  Optionally, once we obtain the period, the tool will apply multi-component cosinor analysis to obtain phase changes. <br>
-  You can download the results for further analysis and plotting. <br> <br>
+  <b>3. Setting the Search Parameters</b>
+  <ul>
+    <li><b>Sampling Rate:</b> This is the number of samples per hour. For example, if you have
+    a sample every 5 minutes, then your sampling rate is 12 samples per hour. </li>
+    <li><b>Max Period:</b> This is the maximum period you want to search for. The units are in hours.</li>
+    <li><b>Min Period:</b> This is the minimum period you want to search for. The units are in hours.</li>
+    <li><b>Number of Cosinor Components:</b> This is the number of cosinor components you want to use
+    to fit your data. The maximum number of components is 4. </li>
+    <li><b>Signal for Analysis:</b> This is the column number of the independent variable you want to analyze.</li>
+  </ul>
 
-  <b>3. How to contribute</b><br>
-  To contribute to this tool, please go to our <a href="https://github.com/edpclau/Client-Side-Circadian-Dynamics"> github page </a>. <br>
+  <b>4. Running the Analysis</b><br>
+  Once you have uploaded your data and set the search parameters, you can run the analysis. This will
+  take some time to run, depending on the size of your dataset and your hardware. Once the analysis is
+  done, you will see the results in the form of a table and a plot. <br><br>
+
+  <b>5. Under the Hood</b><br>
+  When you hit "Analyze" tool uses discrete wavelet transforms to discover the periodicity of your data in the
+  range you selected. The different components of the wavelet transform are then used to calculate the period. 
+  Components are just the different frequencies that make up the wavelet transform at each timepoint ordered 
+  by their saliency. The saliency is a measure of how much of the signal is made up of that frequency. We then
+  apply a cosinor model to the data using the periods we found in each component. The cosinor model is a 
+  linear regression model that uses sine and cosine functions to model the periodicity of the data.
+  The cosinor model is then used to calculate the amplitude and phase of the signal. <br><br>
+  
+  <b>6. Interpreting the Results</b><br>
+  So, how do I know if the periods found by the wavelet transform are correct? Well, there's no 
+  easy answer to that. A quantitative way to do it is to look at the adjusted R-squared value of the
+  cosinor model. If the R-squared value is high, then the cosinor model is a good fit for the data.
+  This means that the periods found by the wavelet transform are close to the actual periods in the data.
+  If the R-squared value is low, then the cosinor model is not a good fit for the data. This means that 
+  the periods found by the wavelet may be spurious. A qualitative way to find out is to look at the 
+  plot of the fit of the data and the cosinor model. If the signals overlap or look similar, then 
+  the periods found by the wavelet transform are probably real. If the signals don't overlap or look
+  similar, then the periods found by the wavelet transform are probably spurious. <br>
 </p>
+
+<h2>Learn More About Wavelet Transforms</h2>
+<p >
+  If you want to learn more about wavelet transforms, check out this by Artem Kirsanov. 
+  It's a great introduction to wavelet transforms and how they work.
+</p>
+<!-- Embed a YouTube video -->
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/jnxqHcObNK4?si=EEISRKI8u5Wv_bIg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</p>
+<br><br>
 </body>
-
-<!-- Button that links to the app -->
-<a href="app.html">Go to the app</a>
-
+<!-- Button that moved you to the app.html page -->
+<p align="right">
+  <button onclick="window.location.href='./app.html'">Go to App</button>
+  </p>
 </html>

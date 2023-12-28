@@ -223,6 +223,13 @@ get_file_proxy = pyodide.ffi.create_proxy(upload)
 document.getElementById('myfile').addEventListener('change', get_file_proxy)
 
 
+async def sample_data(event):
+        global df
+        url = "https://raw.githubusercontent.com/edpclau/Client-Side-Circadian-Dynamics/main/Monitor4%20copy.csv"
+        df = pd.read_csv(url)
+        cols = df.columns.to_numpy().astype(str)
+        df.columns = cols
+        display(df.head(), target = 'csv-content')
 
 
 # Function to run the analysis

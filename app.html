@@ -36,7 +36,11 @@ packages = ["pandas", "statsmodels", "matplotlib"]
     <!-- This is where the form for uploading the data and model is -->
     <h2>Upload Data</h2>
     <!-- Load file from local machine and pass to upload function-->
-    <input type="file" id="myfile" class="input"><br>
+    <label for="myfile">Select a local file:</label>
+    <input type="file" id="myfile" class="input"> <br><br>
+    <p align="right">
+    <button type="button" py-click="sample_data">Use Sample Data Instead</button>
+    </p>
     <div id="csv-content"></div>
 
     <h2>Set Search Parameters</h2>
