@@ -8,7 +8,7 @@ from scipy.signal import cwt, morlet2, butter, sosfilt, find_peaks
 #Read data from file
 from pyscript import display
 from js import document
-from io import BytesIO
+from io import BytesIO, StringIO
 import asyncio
 import pyodide
 
@@ -128,6 +128,7 @@ def convenience_reporter(signal, smooth_signal, synthetic_signal, freqs, cosinor
 
         fig, ax = plt.subplots(5, 1)
         fig.set_size_inches(10, 20)
+        fig.set_dpi(600)
 
         # Raw Signal
         ax[0].plot(times, signal)
@@ -184,7 +185,8 @@ def convenience_reporter(signal, smooth_signal, synthetic_signal, freqs, cosinor
             ax[4].set_title('Periodogram')
             ax[4].legend()
         
-        display(fig.show())
+        display(fig, target = 'results')
+        return fig, ax
 
     
 # Whenever any of the search paramters are updated, update all search paramters
@@ -201,14 +203,13 @@ async def update_search_paramters(event):
         number_of_components = document.getElementById('number_of_components').value
         signal_for_analysis = document.getElementById('signal').value
         document.getElementById('params').innerHTML = "Parameters have been set!"
-        return
+        return 
 
 
 
-# Move data from local storage to python through the web worker 
-
-
+# Move data from local storage to python through the web worker interface
 async def upload(event):
+        document.getElementById('csv-content').innerHTML = ""
         myfile = event.target.files.item(0)
         arrayBuffer = await myfile.arrayBuffer()
         file_bytes = arrayBuffer.to_bytes()
@@ -223,9 +224,11 @@ get_file_proxy = pyodide.ffi.create_proxy(upload)
 document.getElementById('myfile').addEventListener('change', get_file_proxy)
 
 
+# Function to load sample data from github
 async def sample_data(event):
+        document.getElementById('csv-content').innerHTML = ""
         global df
-        url = "https://raw.githubusercontent.com/edpclau/Client-Side-Circadian-Dynamics/main/Monitor4%20copy.csv"
+        url = pyodide.http.open_url("https://raw.githubusercontent.com/edpclau/Client-Side-Circadian-Dynamics/main/Monitor4.csv?token=GHSAT0AAAAAACMAW5KO4W6WWEUZZTRG5LOUZMNZJCA")
         df = pd.read_csv(url)
         cols = df.columns.to_numpy().astype(str)
         df.columns = cols
@@ -233,7 +236,6 @@ async def sample_data(event):
 
 
 # Function to run the analysis
-
 async def run_analysis(event):
         #Get global variables
         global df
@@ -242,6 +244,8 @@ async def run_analysis(event):
         global min_period
         global number_of_components
         global signal_for_analysis
+        global fig
+        global ax
         # Turn into integers
         samples_per_hour = np.int64(samples_per_hour)
         max_period = np.int64(max_period)
@@ -251,29 +255,34 @@ async def run_analysis(event):
         # Split the data into datetime and activity
         datetime, signal = data_time_split(df, signal_for_analysis)
         # Smooth the signal
+        document.getElementById('analysis').innerHTML = "Smoothing Signal... (1/7)"
+        smooth_signal = signal_smoother(signal, sampling_rate = samples_per_hour, min_period = min_period, max_period = max_period, order = 1)
 
-        smooth_signal = signal_smoother(signal, sampling_rate = samples_per_hour, min_period = min_period, max_period = max_period, order = 2)
-    
-        # Extract the frequency components of the signal
+        # Extract the frequency components of the signal        
+        document.getElementById('analysis').innerHTML = "Computing CWT... (2/7)"
         freqs = cwt_compute(smooth_signal, sampling_rate = samples_per_hour, min_period = min_period, max_period = max_period, components = number_of_components)
 
-        print('The frequency components have been extracted.')
+      
         #Generate a synthetic signal with the same frequency components
+        document.getElementById('analysis').innerHTML = "Generating Synthetic Signal (COSINOR Signal)... (3/7)"
         synthetic_signal = multicomponent_cosinor(freqs)
  
-        print('The synthetic signal has been generated.')
+   
         #Fit a cosinor model to the signal
+        document.getElementById('analysis').innerHTML = "Fitting COSINOR to Linear Model... (4/7)"
         cosinor_model = cosinor_lm(smooth_signal, synthetic_signal)
 
-        print('The cosinor model has been fit.')
+        
         #Fit a rolling cosinor model to the signal
+        document.getElementById('analysis').innerHTML = "Fitting COSINOR to Rolling Linear Model... (5/7)"
         rolling_cosinor_model = rolling_cosinor_lm(smooth_signal, synthetic_signal, sampling_rate = samples_per_hour, max_period = max_period)
     
-        print('The rolling cosinor model has been fit.')
+    
         #Adjust the synthetic signal to the cosinor model
+        document.getElementById('analysis').innerHTML = "Adjusting Synthetic Signal with feedback from COSINOR Model... (6/7)"
         synthetic_signal = adjust_synthetic_signal(synthetic_signal, cosinor_model)
-        
-        print('The synthetic signal has been adjusted.')
+      
         #Plot the results
-        convenience_reporter(signal, smooth_signal, synthetic_signal, freqs, cosinor_model, rolling_cosinor_model, sampling_rate = samples_per_hour,  path = None)
+        document.getElementById('analysis').innerHTML = "Plotting Results... (7/7)"
+        fig, ax = convenience_reporter(signal, smooth_signal, synthetic_signal, freqs, cosinor_model, rolling_cosinor_model, sampling_rate = samples_per_hour,  path = None)
         return
