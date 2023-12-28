@@ -1,0 +1,4 @@
+
+{
+        "packages" : ["pandas", "pyodide", "main"]
+}

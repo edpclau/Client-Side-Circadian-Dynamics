@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!-- This is the main page for the Circadian Dynamics Tool. -->
+<!-- This page will be used to assist users in analysing rhythmicity in their data. --> 
+<html>
+<!--  -->
+<!-- This is where all the metadata for the page is -->
+<head>
+<title>Circadian Dynamics</title>
+<!-- Setting up PyScript -->
+<!-- PyScript CSS -->
+<link rel="stylesheet" href="https://pyscript.net/releases/2023.12.1/core.css">
+<!-- This script tag bootstraps PyScript -->
+<script type="module" src="https://pyscript.net/releases/2023.12.1/core.js" terminal></script>
+<script type="py" src="./main.py"></script>
+<py-config>
+packages = ["pandas", "statsmodels", "matplotlib"]
+</py-config>
+
+<!-- Style Sheet -->
+<style>
+    h1 {
+      text-align: center;
+    }
+    
+    h2 {
+      text-align: center;
+    }
+    
+    h3 {
+      text-align: left;
+    }
+    </style>
+</head>
+<!-- End of Metadata -->
+<body>
+    <!-- This is where the form for uploading the data and model is -->
+    <h2>Upload Data</h2>
+    <!-- Load file from local machine and pass to upload function-->
+    <input type="file" id="myfile" class="input"><br>
+    <div id="csv-content"></div>
+
+    <h2>Set Search Parameters</h2>
+    <!-- Input a numerical value for Sampling Rate -->
+    <label for="samples_per_hour">Sampling Rate (samples per hour):</label>
+    <input type="number" id="samples_per_hour" name="samples_per_hour" value="60"><br><br>
+    <!-- Input a numerical value for Max Period in hours -->
+    <label for="max_period">Max Period (hours):</label>
+    <input type="number" id="max_period" name="max_period" value="32"><br><br>
+    <!-- Input a numerical value for Min Period in hours -->
+    <label for="min_period">Min Period (hours):</label>
+    <input type="number" id="min_period" name="min_period" value="8"><br><br>
+    <!-- Input a numerical value for Number of Cosinor Components (max value 4) -->
+    <label for="number_of_components">Number of Cosinor Components:</label>
+    <input type="number" id="number_of_components" name="number_of_components" value="3" max="4"><br><br>
+    <!-- Choose IND for Analysis -->
+    <label for="signal">Signal for Analysis:</label>
+    <input type="text" id="signal" name="signal" value="3"><br><br>
+
+    <!-- Set Button -->
+    <button type="button" py-click="update_search_paramters">Set</button>
+    <p id="params"></p>
+    <h2>Run Analysis</h2>
+    <!-- Run the analysis -->
+    <button type="button" py-click="run_analysis">Run Analysis</button>
+    
+    <div id="results"></div>
+
+  
+
+
+  
+    </body>
+</html>

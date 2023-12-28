@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!-- This is the main page for the Circadian Dynamics Tool. -->
+<!-- This page will be used to assist users in analysing circadian data. -->
+<html>
+<!--  -->
+<!-- This is where all the metadata for the page is -->
+<head>
+<title>Circadian Dynamics</title>
+<!-- Setting up PyScript -->
+<!-- <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+<script defer src="https://pyscript.net/latest/pyscript.js"></script> -->
+
+<!-- Style Sheet -->
+<style>
+    h1 {
+      text-align: center;
+    }
+    
+    h2 {
+      text-align: left;
+    }
+    
+    h3 {
+      text-align: left;
+    }
+    </style>
+</head>
+<!-- End of Metadata -->
+
+
+
+<!-- 
+This is where the body of the page is.
+ -->
+<body>
+<h1>Circadian Dynamics</h1>
+<!-- Tool Disclaimer -->
+<h3>Disclaimer</h3>
+<p>This tool is in early development. <br></p>
+
+<!-- Tool Description -->
+<h2>Description</h2>
+<p>
+  <b>1. Goal</b><br>
+  The goal of this tool is to aid you in exploring circadian rhythms in your data. <br><br>
+  <b>2. How it works</b><br>
+  First, you will need to upload your data. <br>
+  Currenly, we only support ".csv" or ".txt" files with the following format: <br>
+  <ul>
+    <li>First column: Datime</li>
+    <li>Second column onwards: Variables for circadian analysis</li>
+  </ul>
+  <br>
+  Second, you will need to parse through a series of actograms of your data to select
+  the individuals you actually want to analyze. <br> <br>
+
+  Currenly, the tool uses wavelet transforms to discover the periodicity of your data. <br>
+  Optionally, once we obtain the period, the tool will apply multi-component cosinor analysis to obtain phase changes. <br>
+  You can download the results for further analysis and plotting. <br> <br>
+
+  <b>3. How to contribute</b><br>
+  To contribute to this tool, please go to our <a href="https://github.com/edpclau/Client-Side-XAI-Eval-Tool"> github page </a>. <br>
+</p>
+</body>
+
+<!-- Button that links to the app -->
+<a href="app.html">Go to the app</a>
+
+</html>
