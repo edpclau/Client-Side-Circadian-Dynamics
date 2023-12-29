@@ -228,7 +228,7 @@ document.getElementById('myfile').addEventListener('change', get_file_proxy)
 async def sample_data(event):
         document.getElementById('csv-content').innerHTML = ""
         global df
-        url = pyodide.http.open_url("https://raw.githubusercontent.com/edpclau/Client-Side-Circadian-Dynamics/main/Monitor4.csv?token=GHSAT0AAAAAACMAW5KO4W6WWEUZZTRG5LOUZMNZJCA")
+        url = pyodide.http.open_url("https://raw.githubusercontent.com/edpclau/Client-Side-Circadian-Dynamics/main/Monitor4.csv?token=GHSAT0AAAAAACMAW5KO5IRZJWEF56YMBYSYZMPFB6Q")
         df = pd.read_csv(url)
         cols = df.columns.to_numpy().astype(str)
         df.columns = cols
